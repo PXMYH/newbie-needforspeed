@@ -23,8 +23,8 @@ EOF
 # install docker
 sudo yum install -y docker-engine
 
-sudo systemctl start docker.sevice
-sudo systemctl enable docker.service
+sudo systemctl start docker
+sudo systemctl enable docker
 
 # install docker-compose
 curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > /usr/bin/docker-compose
