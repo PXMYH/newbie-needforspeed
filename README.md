@@ -1,2 +1,2 @@
-# newbie-needforspeed
-This repo contains useful scripts to get newbie up and running on development environment common setup
+# toolkit
+not fancy but useful scripts/tools to bootstrap and resolve annoying issues during development process
