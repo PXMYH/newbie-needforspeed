@@ -17,23 +17,28 @@ REM https://blogs.msdn.microsoft.com/askie/2017/06/20/what-is-defaultconnections
 REM https://answers.microsoft.com/en-us/ie/forum/ie11-iewindows8_1/lan-connection-settings-keep-changing-back-to/76a0f5d2-167f-41fa-bf40-1461b8c01642?auth=1
 REM https://superuser.com/a/964026
 
-
-ECHO "YOU ARE ABOUT TO TURN OFF PROXY ..."
-
 SET File_PATH=%CD%
 SET EXPORT_PROXY_FILENAME="proxy_export.reg"
 SET IMPORT_PROXY_FILENAME="proxy_import.reg"
 SET REGKEY_NAME="HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections"
+SET SLEEP_TIMEOUT="300"
 
-ECHO "EXPORTING EXISTING PROXY SETTING ..."
-Reg export %REGKEY_NAME% %EXPORT_PROXY_FILENAME% /y
+FOR /L %%G IN (1, 1, 1000) DO (
+    ECHO "YOU ARE ABOUT TO TURN OFF PROXY ..."
 
-ECHO "TURN OFF PROXY ..."
-type %EXPORT_PROXY_FILENAME% | JREPL.BAT "(.+=hex:)((.{2},){8}).{2},(.+)" "$1$201,$4" /INC "/DefaultConnectionSettings/i/+0" /O %IMPORT_PROXY_FILENAME%
+    ECHO "EXPORTING EXISTING PROXY SETTING ..."
+    Reg export %REGKEY_NAME% %EXPORT_PROXY_FILENAME% /y
 
-ECHO "TAKING EFFECT ..."
-Reg import %IMPORT_PROXY_FILENAME%
+    ECHO "TURN OFF PROXY ..."
+    type %EXPORT_PROXY_FILENAME% | JREPL.BAT "(.+=hex:)((.{2},){8}).{2},(.+)" "$1$201,$4" /INC "/DefaultConnectionSettings/i/+0" /O %IMPORT_PROXY_FILENAME%
 
-ECHO "CLEANING UP ..."
-DEL %IMPORT_PROXY_FILENAME%
-DEL %EXPORT_PROXY_FILENAME%
+    ECHO "TAKING EFFECT ..."
+    Reg import %IMPORT_PROXY_FILENAME%
+
+    ECHO "CLEANING UP ..."
+    DEL %IMPORT_PROXY_FILENAME%
+    DEL %EXPORT_PROXY_FILENAME%
+
+    ECHO "CHECKING AGAIN IN 5 MINUTES"
+    SLEEP %SLEEP_TIMEOUT%
+)
